@@ -1,32 +1,27 @@
-﻿using SistemaVentasSoap.Services.Interfaces;
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Web;
 
-namespace SistemaVentasSoap.Services
+namespace SistemaVentasSoap.DataAcess
 {
-    public class ProductoService: IProductoService
-    { 
+    public class ProductoRepository
+    {
         public List<Producto> GetAll()
         {
             List<Producto> productos = new List<Producto>();
-
-            using (SqlConnection connection = new SqlConnection(ConfigurationManager.ConnectionStrings["ConexionBD"].ConnectionString))
+            using (SqlConnection connection = new DbContext().GetConnection())
             {
                 connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM PRODUCTO", connection);
-                Console.WriteLine("conexion establecida");
+                SqlCommand command = new SqlCommand("SELECT * FROM Producto", connection);
                 using (SqlDataReader reader = command.ExecuteReader())
                 {
-
-                    Console.WriteLine("estamos aqui "+ reader.Read());
                     while (reader.Read())
                     {
                         Producto producto = new Producto
                         {
+                            Id = (int)reader["Id"],
                             Descripcion = (string)reader["Descripcion"],
                             IdCategoria = (int)reader["IdCategoria"],
                             Stock = (int)reader["Stock"],
@@ -35,8 +30,8 @@ namespace SistemaVentasSoap.Services
                         productos.Add(producto);
                     }
                 }
-            }
 
+            }
             return productos;
         }
     }

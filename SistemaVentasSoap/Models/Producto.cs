@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SistemaVentasSoap.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
@@ -8,11 +9,13 @@ namespace SistemaVentasSoap
 {
     public class Producto
     {
-
+        public int Id { get; set; }
         public string Descripcion { get; set; }
         public int IdCategoria { get; set; }
         public int Stock { get; set; }
         public decimal Precio { get; set; }
+        
+        public Categoria Categoria { get; set; }
 
     }
 }
