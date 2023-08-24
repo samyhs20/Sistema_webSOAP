@@ -5,9 +5,8 @@ using System.Web;
 
 namespace SistemaVentasSoap.Models
 {
-    public class Rol
+    public class Rol : BaseEntity
     {
-        public  int Id { get; set; }
-        public string Descripcion { get; set; }
+           public string Descripcion { get; set; }
     }
 }

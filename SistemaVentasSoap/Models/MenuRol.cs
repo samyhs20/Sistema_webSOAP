@@ -5,9 +5,9 @@ using System.Web;
 
 namespace SistemaVentasSoap.Models
 {
-    public class MenuRol
+    public class MenuRol: BaseEntity
     {
-        public int  Id { get; set; }
+        
         public int IdMenu { get; set; }
         public int IdRol { get; set; }  
 

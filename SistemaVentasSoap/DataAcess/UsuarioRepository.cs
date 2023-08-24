@@ -19,7 +19,9 @@ namespace SistemaVentasSoap.DataAcess
                 {
                     connection.Open();
                     //p INNER JOIN Categorias c ON p.IdCategoria = c.Id WHERE p.Id = @ProductoId
-                    SqlCommand command = new SqlCommand("SELECT u.*, r.Id AS IdRol, r.Descripcion AS Descripcion FROM Usuario u INNER JOIN Rol r ON u.IdRol = r.Id", connection);
+                    //SELECT * 
+                    string query = "SELECT u.*, r.Descripcion AS Descripcion FROM Usuario u INNER JOIN Rol r ON u.IdRol = r.Id";
+                    SqlCommand command = new SqlCommand(query, connection);
                     using (SqlDataReader reader = command.ExecuteReader())
                     {
                         while (reader.Read())
@@ -29,7 +31,8 @@ namespace SistemaVentasSoap.DataAcess
                                 Id = (int)reader["Id"],
                                 NombresCompleto = (string)reader["NombresCompleto"],
                                 Correo = (string)reader["Correo"],
-                                IdRol = (int)reader["IdRol"]
+                                IdRol = (int)reader["IdRol"],
+                                Username = (string)reader["Username"]
                             };
 
                             Rol rol = new Rol
@@ -58,13 +61,14 @@ namespace SistemaVentasSoap.DataAcess
                 using (SqlConnection connection = new DbContext().GetConnection())
                 {
                     connection.Open();
-                    string query = "INSERT INTO Usuario (nombresCompleto, Correo, IdRol, Clave) VALUES (@NombreUsuario, @Correo, @IdRol, @Clave)";
+                    string query = "INSERT INTO Usuario (nombresCompleto, Username,Correo, IdRol, Clave) VALUES (@NombreUsuario, @Username , @Correo, @IdRol, dbo.EncriptarClave(@Clave))";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@NombreUsuario", usuario.NombresCompleto);
                         command.Parameters.AddWithValue("@Correo", usuario.Correo);
                         command.Parameters.AddWithValue("@IdRol", usuario.IdRol);
                         command.Parameters.AddWithValue("@Clave", usuario.Clave);
+                        command.Parameters.AddWithValue("@Username", usuario.Username);
 
                         int rowsAffected = command.ExecuteNonQuery();
                         return "Creado usuario";
@@ -78,7 +82,7 @@ namespace SistemaVentasSoap.DataAcess
                 return ex.ToString();
             }
         }
-        //metodo para Editar a un usuario
+        //metodo para Editar a un usuario NO hacer un 
         public  Usuario Edit(Usuario usuario)
         {
             try
@@ -89,7 +93,7 @@ namespace SistemaVentasSoap.DataAcess
                     //abrimos la conexion
                     connection.Open();
                     //sentencia SQL que se va a ejecutar
-                    string query = "UPDATE Usuario SET NombresCompleto = @Nombre, IdRol = @IdRol, Clave=@Clave, Correo = @Correo WHERE Id = @Id";
+                    string query = "UPDATE Usuario SET NombresCompleto = @Nombre, IdRol = @IdRol, Clave= dbo.EncriptarClave(@Clave), Correo = @Correo WHERE Id = @Id";
                     //se realiza dento para ejecutar el query
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
@@ -129,7 +133,11 @@ namespace SistemaVentasSoap.DataAcess
                 using (SqlConnection connection = new DbContext().GetConnection())
                 {
                     connection.Open();
-                    string query = "SELECT u.*, r.Id AS IdRol, r.Descripcion AS Descripcion FROM Usuario u INNER JOIN Rol r ON u.IdRol = r.Id WHERE u.Id = @Id";
+                    //SELECT id, nombresCompleto, correo, dbo.DesencriptarClave(clave) AS clave, idRol
+                    //FROM USUARIO;
+                    string query = "SELECT " +
+                        "u.Id as Id , u.NombresCompleto as NombresCompleto , u.Correo AS Correo, u.IdRol as Rol, dbo.DesencriptarClave(u.clave) AS Clave," +
+                        "r.Id AS IdRol, r.Descripcion AS Descripcion FROM Usuario u INNER JOIN Rol r ON u.IdRol = r.Id WHERE u.Id = @Id";
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@Id", id);
 
@@ -143,7 +151,7 @@ namespace SistemaVentasSoap.DataAcess
                             NombresCompleto = (string)reader["NombresCompleto"],
                             Correo = (string)reader["Correo"],
                             Clave = (string)reader["Clave"],
-                            IdRol = (int)reader["IdRol"]
+                            IdRol = (int)reader["Rol"]
                         };
                         Rol rol = new Rol
                         {
@@ -158,6 +166,7 @@ namespace SistemaVentasSoap.DataAcess
                     {
                         return null; // No se encontró un usuario con ese ID
                     }
+                    //reader.Close();
                 }
             }
             catch (Exception ex)
@@ -165,6 +174,38 @@ namespace SistemaVentasSoap.DataAcess
                 // Manejar excepciones aquí
                 return null;
             }
+        }
+
+        public bool LoginUser(string username, string pass)
+        {
+            //try
+            //{
+                using (SqlConnection connection = new DbContext().GetConnection())
+                {
+                    connection.Open();
+                    string query = "SELECT u.*, r.Descripcion as Descripcion from Usuario u INNER JOIN Rol r ON u.IdRol = r.id where u.username = @Username and dbo.DesencriptarClave(u.clave) = @Clave";
+
+                    SqlCommand command = new SqlCommand(query, connection);
+                    //se escribe los parametros que se piden siempre que pongas con @es lo que se va a mandar 
+                    command.Parameters.AddWithValue("@Username", username);
+                    command.Parameters.AddWithValue("@Clave", pass);
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read())
+                    { 
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                }
+            //}
+            //catch (Exception ex)
+            //{
+              //  return false;
+            //}
+           
         }
     }
 }

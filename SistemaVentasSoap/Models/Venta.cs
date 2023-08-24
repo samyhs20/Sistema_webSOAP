@@ -5,11 +5,15 @@ using System.Web;
 
 namespace SistemaVentasSoap.Models
 {
-    public class Venta
+    public class Venta: BaseEntity
     {
-        public int Id { get; set; }
         public string NumeroDocumento { get; set; }
         public string TipoPago { get; set; }
         public decimal Total { get; set; }
+
+        public int IdCliente { get; set; }
+        //
+        public Cliente Cliente { get; set; }
     }
+   
 }

@@ -16,5 +16,6 @@ namespace SistemaVentasSoap.DataAcess.Interfaces
         [OperationContract]
         String Create(Usuario usuario);
         Usuario GetById(int id);
+        bool LoginUser(string username, string pass);
     }
 }

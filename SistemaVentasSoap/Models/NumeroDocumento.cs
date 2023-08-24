@@ -5,9 +5,8 @@ using System.Web;
 
 namespace SistemaVentasSoap.Models
 {
-    public class NumeroDocumento
+    public class NumeroDocumento:BaseEntity
     {
-        public int Id { get; set; }
         public int UltimoNumero { get; set; }
     }
 }

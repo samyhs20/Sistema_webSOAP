@@ -77,7 +77,9 @@
     <Compile Include="DataAcess\Interfaces\IUsuarioRepository.cs" />
     <Compile Include="DataAcess\ProductoRepository.cs" />
     <Compile Include="DataAcess\UsuarioRepository.cs" />
+    <Compile Include="Models\BaseEntity.cs" />
     <Compile Include="Models\Categoria.cs" />
+    <Compile Include="Models\Cliente.cs" />
     <Compile Include="Models\DetalleVenta.cs" />
     <Compile Include="Models\Menu.cs" />
     <Compile Include="Models\MenuRol.cs" />
