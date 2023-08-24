@@ -7,9 +7,8 @@ using System.Xml.Serialization;
 
 namespace SistemaVentasSoap
 {
-    public class Producto
+    public class Producto : BaseEntity
     {
-        public int Id { get; set; }
         public string Descripcion { get; set; }
         public int IdCategoria { get; set; }
         public int Stock { get; set; }

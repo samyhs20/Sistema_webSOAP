@@ -33,7 +33,7 @@ namespace SistemaVentasSoap
 
 
         [WebMethod]
-        public String InsertarUsuario(string name, string correo, string clave, int rol)
+        public String InsertarUsuario(string name, string username ,string correo, string clave, int rol)
         {
             Usuario usuario = new Usuario()
             {
@@ -41,7 +41,8 @@ namespace SistemaVentasSoap
                 NombresCompleto = name,
                 Correo = correo,
                 Clave = clave,
-                IdRol = rol
+                IdRol = rol,
+                Username = username
 
             };
             return _usuarioRepository.Create(usuario);
@@ -51,6 +52,11 @@ namespace SistemaVentasSoap
         public Usuario BuscarUsuario(int id)
         {
             return _usuarioRepository.GetById(id);
+        }
+        [WebMethod]
+        public bool LoginUsuario(string username, string clave)
+        {
+            return _usuarioRepository.LoginUser(username, clave);
         }
     }
 }

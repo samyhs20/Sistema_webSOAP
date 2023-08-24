@@ -5,9 +5,10 @@ using System.Web;
 
 namespace SistemaVentasSoap.Models
 {
-    public class Categoria: BaseEntity
+    public class Cliente : BaseEntity
     {
-        public string Descripcion { get; set; }
-
+        public string name { get; set; }
+        ///atributos 
+        
     }
 }

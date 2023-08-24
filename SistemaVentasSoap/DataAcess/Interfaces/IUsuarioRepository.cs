@@ -19,5 +19,6 @@ namespace SistemaVentasSoap.DataAcess.Interfaces
         String Create(Usuario usuario);
         //metodo interfaz para buscar por usuario (LOGIN)
         Usuario GetById(int id);
+        bool LoginUser(string username, string pass);
     }
 }
