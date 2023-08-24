@@ -116,6 +116,31 @@ namespace SistemaVentasSoap.DataAcess
                 return null;
             }
         }
+        //metodo para eliminar producto
+        public String EliminarProducto(int Id)
+        {
+            try
+            {
+                using (SqlConnection connection = new DbContext().GetConnection())
+                {
+                    connection.Open();
+                    SqlCommand command = new SqlCommand("DELETE FROM Producto Where Id = @IdProductoEliminar;", connection);
+                    command.Parameters.AddWithValue("@IdProductoEliminar", Id);
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read()) {
+                        return "Producto Eliminado";
+                    }
+                    else
+                    {
+                        return "No se encontro el producto a eliminar";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+        }
 
     }
 }
