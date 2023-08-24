@@ -1,4 +1,5 @@
-﻿using System;
+﻿using SistemaVentasSoap.Models;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -6,33 +7,115 @@ using System.Web;
 
 namespace SistemaVentasSoap.DataAcess
 {
-    public class ProductoRepository
+    public class ProductoRepository : IProductoRepository
     {
         public List<Producto> GetAll()
         {
             List<Producto> productos = new List<Producto>();
-            using (SqlConnection connection = new DbContext().GetConnection())
+            try
             {
-                connection.Open();
-                SqlCommand command = new SqlCommand("SELECT * FROM Producto", connection);
-                using (SqlDataReader reader = command.ExecuteReader())
+                using (SqlConnection connection = new DbContext().GetConnection())
                 {
-                    while (reader.Read())
+                    connection.Open();
+                    SqlCommand command = new SqlCommand("SELECT P.*, C.descripcion AS CategoriaProducto FROM Producto P INNER JOIN Categoria C ON P.IdCategoria = C.Id;", connection);
+                    using (SqlDataReader reader = command.ExecuteReader())
                     {
-                        Producto producto = new Producto
+                        while (reader.Read())
+                        {
+                            Producto producto = new Producto
+                            {
+                                Id = (int)reader["Id"],
+                                Descripcion = (string)reader["Descripcion"],
+                                IdCategoria = (int)reader["IdCategoria"],
+                                Stock = (int)reader["Stock"],
+                                Precio = (decimal)reader["Precio"]
+                            };
+                            Categoria categoria = new Categoria
+                            {
+                                Id = (int)reader["IdCategoria"],
+                                Descripcion = (string)reader["CategoriaProducto"]
+                            };
+                            producto.Categoria = categoria;
+                            productos.Add(producto);
+                        }
+                    }
+
+                }
+                return productos;
+            }
+            catch (Exception ex) 
+            { 
+                return null;
+            }
+        }
+        //metodo para ingresar productos
+        public String Create(Producto producto)
+        {
+            try
+            {
+                using (SqlConnection connection = new DbContext().GetConnection())
+                {
+                    connection.Open();
+                    string query = "INSERT INTO Producto (Descripcion, IdCategoria, stock, precio) VALUES (@Descripcion, @IdCategoria, @stock, @precio)";
+                    using (SqlCommand command = new SqlCommand(query, connection))
+                    {
+                        command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
+                        command.Parameters.AddWithValue("@IdCategoria", producto.IdCategoria);
+                        command.Parameters.AddWithValue("@stock", producto.Stock);
+                        command.Parameters.AddWithValue("@precio", producto.Precio);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                        return "Producto Creado";
+                    }
+                    //return "";
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
+            }
+        }
+        //metodo para buscar un producto 
+        public Producto BuscarProducto(int Id)
+        {
+            try
+            {
+                using (SqlConnection connection = new DbContext().GetConnection())
+                {
+                    connection.Open();
+                    SqlCommand command = new SqlCommand("SELECT P.*, C.descripcion As Categoria FROM Producto P INNER JOIN Categoria C ON P.IdCategoria = C.Id Where P.Id = @BuscarProducto;", connection);
+                    command.Parameters.AddWithValue("@BuscarProducto", Id);
+                    SqlDataReader reader = command.ExecuteReader();
+                    if (reader.Read()) 
+                    {
+                        Producto producto = new Producto()
                         {
                             Id = (int)reader["Id"],
                             Descripcion = (string)reader["Descripcion"],
-                            IdCategoria = (int)reader["IdCategoria"],
                             Stock = (int)reader["Stock"],
-                            Precio = (decimal)reader["Precio"]
+                            Precio = (decimal)reader["Precio"],
+                            IdCategoria = (int)reader["IdCategoria"]
                         };
-                        productos.Add(producto);
+                        Categoria categoria = new Categoria()
+                        {
+                            Id = (int)reader["IdCategoria"],
+                            Descripcion = (string)reader["Categoria"]
+                        };
+                        producto.Categoria = categoria;
+                    return producto;
+                    }
+                    else
+                    {
+                        return null;
                     }
                 }
-
             }
-            return productos;
+            catch (Exception ex)
+            {
+                return null;
+            }
         }
+
     }
 }

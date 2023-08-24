@@ -17,13 +17,35 @@ namespace SistemaVentasSoap
     // [System.Web.Script.Services.ScriptService]
     public class ProductoServices : System.Web.Services.WebService
     {
+        public readonly ProductoRepository _productoRepository;
+
+        public ProductoServices()
+        {
+            _productoRepository = new ProductoRepository();
+        }
 
         [WebMethod]
         public List<Producto> ObtenerTodosLosProductos()
         {
-            ProductoRepository productoRepository = new ProductoRepository();
-            List<Producto> p = productoRepository.GetAll();
-            return p;
+            return _productoRepository.GetAll();
+        }
+        [WebMethod]
+        public String CrearProducto(string Descripcion, int IdCategoria, int Stock, decimal Precio)
+        {
+            Producto producto = new Producto()
+            {
+                Descripcion = Descripcion,
+                IdCategoria = IdCategoria,
+                Stock = Stock,
+                Precio = Precio
+            };
+            return _productoRepository.Create(producto);
+  
+        }
+        [WebMethod]
+        public Producto BuscarProducto(int Id) 
+        { 
+              return _productoRepository.BuscarProducto(Id);
         }
     }
 }

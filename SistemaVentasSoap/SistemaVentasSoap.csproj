@@ -74,6 +74,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataAcess\DbContext.cs" />
+    <Compile Include="DataAcess\Interfaces\IProductoRepository.cs" />
     <Compile Include="DataAcess\Interfaces\IUsuarioRepository.cs" />
     <Compile Include="DataAcess\ProductoRepository.cs" />
     <Compile Include="DataAcess\UsuarioRepository.cs" />

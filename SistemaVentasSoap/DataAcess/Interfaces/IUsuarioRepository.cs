@@ -8,13 +8,16 @@ using System.Threading.Tasks;
 
 namespace SistemaVentasSoap.DataAcess.Interfaces
 {
-    [ServiceContract]
+    //[ServiceContract]
     internal interface IUsuarioRepository
     {
-        [OperationContract]
+        //[OperationContract]
+        //metodo interfaz obtener todos los usuarios
         List<Usuario> GetAll();
-        [OperationContract]
+        //[OperationContract]
+        //metodo interfaz para crear usuarios
         String Create(Usuario usuario);
+        //metodo interfaz para buscar por usuario (LOGIN)
         Usuario GetById(int id);
     }
 }
