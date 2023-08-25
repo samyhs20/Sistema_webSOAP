@@ -18,7 +18,9 @@ namespace SistemaVentasSoap.DataAcess.Interfaces
         //metodo interfaz para crear producto
         String Create(Producto producto);
         //metodo interfaz para buscar por
-        Producto BuscarProducto(int id);   
+        Producto BuscarProducto(int id);
+        //metodo para eliminar producto
+        String EliminarProducto(int id);
     }
 }
 

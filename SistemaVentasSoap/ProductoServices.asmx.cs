@@ -47,5 +47,10 @@ namespace SistemaVentasSoap
         { 
               return _productoRepository.BuscarProducto(Id);
         }
+        [WebMethod] 
+        public String EliminarProducto(int Id)
+        {
+            return _productoRepository.EliminarProducto(Id);
+        }
     }
 }
