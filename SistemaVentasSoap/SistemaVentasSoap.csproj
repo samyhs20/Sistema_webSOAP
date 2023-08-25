@@ -80,15 +80,11 @@
     <Compile Include="DataAcess\UsuarioRepository.cs" />
     <Compile Include="Models\BaseEntity.cs" />
     <Compile Include="Models\Categoria.cs" />
-    <Compile Include="Models\Cliente.cs" />
-    <Compile Include="Models\DetalleVenta.cs" />
-    <Compile Include="Models\Menu.cs" />
-    <Compile Include="Models\MenuRol.cs" />
-    <Compile Include="Models\NumeroDocumento.cs" />
+    <Compile Include="Models\DetalleCompra.cs" />
     <Compile Include="Models\Producto.cs" />
     <Compile Include="Models\Rol.cs" />
     <Compile Include="Models\Usuario.cs" />
-    <Compile Include="Models\Venta.cs" />
+    <Compile Include="Models\Compra.cs" />
     <Compile Include="ProductoServices.asmx.cs">
       <DependentUpon>ProductoServices.asmx</DependentUpon>
       <SubType>Component</SubType>

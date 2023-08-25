@@ -1,6 +1,5 @@
+use DBMartHome
 --CREATE TABLES
-CREATE DATABASE DBVENTAS
-use DBVENTAS
 
 CREATE TABLE ROL(
 id int primary key identity(1,1),
@@ -8,24 +7,16 @@ descripcion varchar (50),
 fechaRegistro datetime default getdate()
 )
 
-CREATE TABLE MENU (
-id int primary key identity(1,1),
-nombre varchar(50),
-icono varchar(50),
-url varchar (50)
-)
-
-CREATE TABLE MenuRol(
-id int primary key identity(1,1),
-idMenu int references MENU(id),
-idRol int references ROL(id),
-)
-
 create table USUARIO(
 id int primary key identity(1,1),
-nombresCompleto varchar(100),
+nombre varchar(100),
+apellido varchar(100),
+direccion varchar(100),
+edad int ,
+telefono varchar(13),
 correo varchar(60),
-clave varchar(40),
+username varchar(50),
+clave Varbinary(100),
 idRol int references ROL(id),
 activo bit default 1,
 fechaRegistro datetime default getdate()
@@ -48,23 +39,18 @@ activo bit default 1,
 fechaRegistro datetime default getdate()
 )
 
-create table NUMERODOCUMENTO(
-id int primary key identity(1,1),
-ultimo_numero int not null,
-fechaRegistro datetime default getdate()
-)
-
-create table VENTA (
+create table COMPRA (
 id int primary key identity(1,1),
 numeroDocumento varchar(50),
 tipoPago varchar(50),
 total decimal (10,2),
-fechaRegistro datetime default getdate()
+fechaRegistro datetime default getdate(), 
+idUsuario int references Usuario(id)
 )
 
-create table DETALLEVENTA(
+create table DETALLECOMPRA(
 id int primary key identity(1,1),
-idVenta int references VENTA(id),
+idVenta int references COMPRA(id),
 idProducto int references PRODUCTO (id),
 cantidad int, 
 precio decimal(10,2),

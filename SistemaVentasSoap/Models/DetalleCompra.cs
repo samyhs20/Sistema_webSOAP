@@ -5,14 +5,14 @@ using System.Web;
 
 namespace SistemaVentasSoap.Models
 {
-    public class DetalleVenta: BaseEntity
+    public class DetalleCompra: BaseEntity
     {
         public int IdVenta { get; set; }
         public int IdProducto { get; set; }
         public decimal Cantidad { get; set; }
         public decimal Precio { get; set; }
 
-        public Venta Venta { get; set; }
+        public Compra Venta { get; set; }
         public Producto Producto { get; set; }
         
     }
