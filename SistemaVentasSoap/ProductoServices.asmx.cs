@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using System.Web.Services;
 
@@ -40,17 +41,30 @@ namespace SistemaVentasSoap
                 Precio = Precio
             };
             return _productoRepository.Create(producto);
-  
+
         }
         [WebMethod]
-        public Producto BuscarProducto(int Id) 
-        { 
-              return _productoRepository.BuscarProducto(Id);
+        public Producto BuscarProducto(int Id)
+        {
+            return _productoRepository.BuscarProducto(Id);
         }
-        [WebMethod] 
+        [WebMethod]
         public String EliminarProducto(int Id)
         {
             return _productoRepository.EliminarProducto(Id);
+        }
+        [WebMethod]
+        public String ActualizarProducto(int Id, int IdCategoria, string Descripcion, int Stock, decimal Precio)
+        {
+            Producto producto = new Producto()
+            {
+                Id = Id,
+                IdCategoria = IdCategoria,
+                Stock = Stock,
+                Descripcion = Descripcion,
+                Precio = Precio
+            };
+            return _productoRepository.ActualizarProducto(producto);
         }
     }
 }

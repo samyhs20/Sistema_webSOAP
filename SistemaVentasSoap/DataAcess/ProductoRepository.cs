@@ -1,5 +1,6 @@
 ﻿using SistemaVentasSoap.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -139,6 +140,36 @@ namespace SistemaVentasSoap.DataAcess
             catch (Exception ex)
             {
                 return null;
+            }
+        }
+        public String ActualizarProducto(Producto producto)
+        {
+            try
+            {
+                using (SqlConnection connection = new DbContext().GetConnection()){
+                    connection.Open();
+                    using (SqlCommand command = new SqlCommand("UPDATE Producto SET descripcion = @Descripcion, idCategoria = @IdCategoria, Precio = @Precio, Stock = @Stock WHERE id = @Id;", connection)) {
+                        command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
+                        command.Parameters.AddWithValue("@IdCategoria", producto.IdCategoria);
+                        command.Parameters.AddWithValue("@stock", producto.Stock);
+                        command.Parameters.AddWithValue("@precio", producto.Precio);
+                        command.Parameters.AddWithValue("@Id", producto.Id);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+                    if (rowsAffected > 0)  {
+                            return ("Se Actualizo producto");
+
+                        }
+                    else { return ("No se encontro el Id del producto");
+                        }
+                    }
+    
+                }
+
+            }
+            catch (Exception ex)
+            {
+                return ex.ToString();
             }
         }
 

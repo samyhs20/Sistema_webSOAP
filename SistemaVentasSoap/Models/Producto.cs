@@ -12,8 +12,7 @@ namespace SistemaVentasSoap
         public string Descripcion { get; set; }
         public int IdCategoria { get; set; }
         public int Stock { get; set; }
-        public decimal Precio { get; set; }
-        
+        public decimal Precio { get; set; }  
         public Categoria Categoria { get; set; }
 
     }
