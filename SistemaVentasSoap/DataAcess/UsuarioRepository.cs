@@ -90,7 +90,7 @@ namespace SistemaVentasSoap.DataAcess
                     //SELECT id, nombresCompleto, correo, dbo.DesencriptarClave(clave) AS clave, idRol
                     //FROM USUARIO;
                     string query = "SELECT " +
-                        "u.Id as Id , u.NombresCompleto as NombresCompleto , u.Correo AS Correo, u.IdRol as Rol, dbo.DesencriptarClave(u.clave) AS Clave," +
+                        "u.Id as Id ,u.Username as Username, u.NombresCompleto as NombresCompleto , u.Correo AS Correo, u.IdRol as Rol, dbo.DesencriptarClave(u.clave) AS Clave," +
                         "r.Id AS IdRol, r.Descripcion AS Descripcion FROM Usuario u INNER JOIN Rol r ON u.IdRol = r.Id WHERE u.Id = @Id";
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@Id", id);
@@ -105,7 +105,8 @@ namespace SistemaVentasSoap.DataAcess
                             NombresCompleto = (string)reader["NombresCompleto"],
                             Correo = (string)reader["Correo"],
                             Clave = (string)reader["Clave"],
-                            IdRol = (int)reader["Rol"]
+                            IdRol = (int)reader["Rol"],
+                            Username = (string)reader["Username"]
                         };
                         Rol rol = new Rol
                         {
@@ -178,49 +179,54 @@ namespace SistemaVentasSoap.DataAcess
             
         }
         //metodo para Actualizar un usuario por su ID a un usuario NO hacer un 
-        public  Usuario Edit(Usuario usuario, string username)
+        public Result Edit(Usuario usuario)
         {
-                try
+            Result result = new Result();
+            try
+            {
+                //conexion de la base de datos
+                using (SqlConnection connection = new DbContext().GetConnection())
                 {
-                    //conexion de la base de datos
-                    using (SqlConnection connection = new DbContext().GetConnection())
+                    //abrimos la conexion
+                    connection.Open();
+                    //sentencia SQL que se va a ejecutar
+                    string query = "UPDATE Usuario SET NombresCompleto = @NombresCompleto, IdRol = @IdRol, Clave= dbo.EncriptarClave(@Clave), Correo = @Correo WHERE Id = @Id";
+                    //se realiza dento para ejecutar el query
+                    using (SqlCommand command = new SqlCommand(query, connection))
                     {
-                        //abrimos la conexion
-                        connection.Open();
-                        //sentencia SQL que se va a ejecutar
-                        string query = "UPDATE Usuario SET NombresCompleto = @Nombre, IdRol = @IdRol, Clave= dbo.EncriptarClave(@Clave), Correo = @Correo WHERE Id = @Id";
-                        //se realiza dento para ejecutar el query
-                        using (SqlCommand command = new SqlCommand(query, connection))
+                        //se escribe los parametros que se piden siempre que pongas con @es lo que se va a mandar 
+                        command.Parameters.AddWithValue("@NombresCompleto", usuario.NombresCompleto);
+                        command.Parameters.AddWithValue("@Correo", usuario.Correo);
+                        command.Parameters.AddWithValue("@IdRol", usuario.IdRol);
+                        command.Parameters.AddWithValue("@Clave", usuario.Clave);
+                        command.Parameters.AddWithValue("@Id", usuario.Id);
+
+                        int rowsAffected = command.ExecuteNonQuery();
+
+                        if (rowsAffected > 0)
                         {
-                            //se escribe los parametros que se piden siempre que pongas con @es lo que se va a mandar 
-                            command.Parameters.AddWithValue("@NombresCompleto", usuario.NombresCompleto);
-                            command.Parameters.AddWithValue("@Correo", usuario.Correo);
-                            command.Parameters.AddWithValue("@IdRol", usuario.IdRol);
-                            command.Parameters.AddWithValue("@Clave", usuario.Clave);
-
-                            int rowsAffected = command.ExecuteNonQuery();
-
-                            if (rowsAffected > 0)
-                            {
-                                return usuario; // Retorna el usuario editado
-                            }
-                            else
-                            {
-                                return null; // No se pudo actualizar el usuario
-                            }
+                            result.Usuario = usuario;
+                            result.Mensaje = "Actualizacion del Usuario con identificador " + usuario.Id+ " Correcta";
+                            return result; // Retorna el usuario editado
                         }
-
+                        else
+                        {
+                            result.Usuario = null;
+                            result.Mensaje = "No se pudo actualizar el usuario compruebe la peticion ";
+                            return result; // No se pudo actualizar el usuario
+                        }
                     }
 
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine(ex);
-                    return null;
-                }
-            
-        }
-        
+
+            }
+            catch (Exception ex)
+            {
+                result.Usuario = null;
+                result.Mensaje = ex.ToString();
+                return result;
+            }
+        }             
 
         public ResultLogin LoginUser(string username, string pass)
         {

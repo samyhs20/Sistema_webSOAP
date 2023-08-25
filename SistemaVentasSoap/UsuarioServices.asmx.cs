@@ -34,7 +34,7 @@ namespace SistemaVentasSoap
 
 
         [WebMethod]
-        public Result InsertarUsuario(string name, string username ,string correo, string clave, int rol)
+        public Result InsertarUsuario(string name, string username, string correo, string clave, int rol)
         {
             Usuario usuario = new Usuario()
             {
@@ -64,6 +64,47 @@ namespace SistemaVentasSoap
         {
             return _usuarioRepository.Delete(id);
         }
+
+        [WebMethod]
+        public Result ActualizarUsuario(int id, string name, string username, string correo, string clave, int rol)
+        {
+
+            ResultArray result = _usuarioRepository.GetAll();
+            bool uniqueuser = false; // Inicialización predeterminada
+
+            foreach (var item in result.Usuarios)
+            {
+                if (item.Id != id && item.Username == username)
+                {
+                    uniqueuser = true;
+                    break; // Salir del bucle cuando se encuentra una coincidencia
+                }
+            }
+
+            if (uniqueuser)
+            {
+                Result res = new Result()
+                {
+                    Usuario = null,
+                    Mensaje = "El Username no puede ser usado, porque otro usuario lo tiene, modifique con otro username"
+                };
+                return res;
+            }
+            else {
+                Usuario usuario = new Usuario()
+                {
+                    Id = id,
+                    NombresCompleto = name,
+                    Correo = correo,
+                    Clave = clave,
+                    IdRol = rol,
+                    Username = username
+
+                };
+                return _usuarioRepository.Edit(usuario);
+            }
+        }
     }
-    
+         
 }
+    

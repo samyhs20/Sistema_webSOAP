@@ -21,7 +21,9 @@ namespace SistemaVentasSoap.DataAcess.Interfaces
         //metodo interfaz para buscar por usuario (LOGIN)
         Result GetById(int id);
         ResultLogin LoginUser(string username, string pass);
-
+        //metodo interfaz para eliminar a nuestro usuario
         String Delete(int id);
+        //metodo interfaz para actualizar el usuario
+        Result Edit(Usuario usuario);
     }
 }
