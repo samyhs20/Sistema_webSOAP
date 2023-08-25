@@ -73,7 +73,9 @@
     <Content Include="Web.config" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataAcess\CategoriaRepository.cs" />
     <Compile Include="DataAcess\DbContext.cs" />
+    <Compile Include="DataAcess\Interfaces\ICategoriaRepository.cs" />
     <Compile Include="DataAcess\Interfaces\IProductoRepository.cs" />
     <Compile Include="DataAcess\Interfaces\IUsuarioRepository.cs" />
     <Compile Include="DataAcess\ProductoRepository.cs" />
