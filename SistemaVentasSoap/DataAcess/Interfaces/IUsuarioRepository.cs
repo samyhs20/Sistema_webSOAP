@@ -5,6 +5,7 @@ using System.Linq;
 using System.ServiceModel;
 using System.Text;
 using System.Threading.Tasks;
+using static SistemaVentasSoap.DataAcess.UsuarioRepository;
 
 namespace SistemaVentasSoap.DataAcess.Interfaces
 {
@@ -13,12 +14,14 @@ namespace SistemaVentasSoap.DataAcess.Interfaces
     {
         //[OperationContract]
         //metodo interfaz obtener todos los usuarios
-        List<Usuario> GetAll();
+        ResultArray GetAll();
         //[OperationContract]
         //metodo interfaz para crear usuarios
-        String Create(Usuario usuario);
+        Result Create(Usuario usuario);
         //metodo interfaz para buscar por usuario (LOGIN)
-        Usuario GetById(int id);
-        bool LoginUser(string username, string pass);
+        Result GetById(int id);
+        ResultLogin LoginUser(string username, string pass);
+
+        String Delete(int id);
     }
 }

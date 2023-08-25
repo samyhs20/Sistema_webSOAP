@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
+using static SistemaVentasSoap.DataAcess.UsuarioRepository;
 
 namespace SistemaVentasSoap
 {
@@ -26,14 +27,14 @@ namespace SistemaVentasSoap
         }
 
         [WebMethod]
-        public List<Usuario> ObtenerTodosLosUsuarios()
+        public ResultArray ObtenerTodosLosUsuarios()
         {
             return _usuarioRepository.GetAll();
         }
 
 
         [WebMethod]
-        public String InsertarUsuario(string name, string username ,string correo, string clave, int rol)
+        public Result InsertarUsuario(string name, string username ,string correo, string clave, int rol)
         {
             Usuario usuario = new Usuario()
             {
@@ -49,14 +50,20 @@ namespace SistemaVentasSoap
         }
 
         [WebMethod]
-        public Usuario BuscarUsuario(int id)
+        public Result BuscarUsuario(int id)
         {
             return _usuarioRepository.GetById(id);
         }
         [WebMethod]
-        public bool LoginUsuario(string username, string clave)
+        public ResultLogin LoginUsuario(string username, string clave)
         {
             return _usuarioRepository.LoginUser(username, clave);
         }
+        [WebMethod]
+        public String EliminarUsuario(int id)
+        {
+            return _usuarioRepository.Delete(id);
+        }
     }
+    
 }

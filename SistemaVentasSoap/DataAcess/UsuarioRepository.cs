@@ -10,9 +10,28 @@ namespace SistemaVentasSoap.DataAcess
 {
     public class UsuarioRepository : IUsuarioRepository
     {
-        //metodo para obtener todos los usuarios
-        public List<Usuario> GetAll()
+        //clases para retornar el objeto del repositorio con mensajes y banderas , para controlar errores
+        public class Result { 
+        public Usuario Usuario { get; set; }
+        public string Mensaje { get; set; }    
+        }
+
+        public class ResultArray
         {
+            public List<Usuario> Usuarios { get; set; }
+            public string Mensaje { get; set; }
+        }
+        public class ResultLogin
+        {
+            public Usuario Usuario { get; set; }
+            public bool Flag { get; set; }
+            public string Mensaje { get; set; }
+        }
+
+        //metodo para obtener todos los usuarios
+        public ResultArray GetAll()
+        {
+            ResultArray result = new ResultArray();
             List<Usuario> usuarios = new List<Usuario>();
             try {
                 using (SqlConnection connection = new DbContext().GetConnection())
@@ -46,87 +65,22 @@ namespace SistemaVentasSoap.DataAcess
                         }
                     }
                 }
-                return usuarios;
+                result.Usuarios = usuarios;
+                result.Mensaje = "OK";
+                return result;
             }
             catch (Exception ex)
             {
+                result.Usuarios = null;
+                result.Mensaje = ex.ToString();
                 return null;
             }
         }
-        //metodo para ingresar un usuario
-        public String Create(Usuario usuario)
-        {
-            try
-            {
-                using (SqlConnection connection = new DbContext().GetConnection())
-                {
-                    connection.Open();
-                    string query = "INSERT INTO Usuario (nombresCompleto, Username,Correo, IdRol, Clave) VALUES (@NombreUsuario, @Username , @Correo, @IdRol, dbo.EncriptarClave(@Clave))";
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        command.Parameters.AddWithValue("@NombreUsuario", usuario.NombresCompleto);
-                        command.Parameters.AddWithValue("@Correo", usuario.Correo);
-                        command.Parameters.AddWithValue("@IdRol", usuario.IdRol);
-                        command.Parameters.AddWithValue("@Clave", usuario.Clave);
-                        command.Parameters.AddWithValue("@Username", usuario.Username);
 
-                        int rowsAffected = command.ExecuteNonQuery();
-                        return "Creado usuario";
-                    }
-                    //return "Si pa aqui";
-
-                }
-            }
-            catch (Exception ex)
-            {
-                return ex.ToString();
-            }
-        }
-        //metodo para Editar a un usuario NO hacer un 
-        public  Usuario Edit(Usuario usuario)
-        {
-            try
-            {
-                //conexion de la base de datos
-                using (SqlConnection connection = new DbContext().GetConnection())
-                {
-                    //abrimos la conexion
-                    connection.Open();
-                    //sentencia SQL que se va a ejecutar
-                    string query = "UPDATE Usuario SET NombresCompleto = @Nombre, IdRol = @IdRol, Clave= dbo.EncriptarClave(@Clave), Correo = @Correo WHERE Id = @Id";
-                    //se realiza dento para ejecutar el query
-                    using (SqlCommand command = new SqlCommand(query, connection))
-                    {
-                        //se escribe los parametros que se piden siempre que pongas con @es lo que se va a mandar 
-                        command.Parameters.AddWithValue("@NombresCompleto", usuario.NombresCompleto);
-                        command.Parameters.AddWithValue("@Correo", usuario.Correo);
-                        command.Parameters.AddWithValue("@IdRol", usuario.IdRol);
-                        command.Parameters.AddWithValue("@Clave", usuario.Clave);
-
-                        int rowsAffected = command.ExecuteNonQuery();
-
-                        if (rowsAffected > 0)
-                        {
-                            return usuario; // Retorna el usuario editado
-                        }
-                        else
-                        {
-                            return null; // No se pudo actualizar el usuario
-                        }
-                    }
-                    
-                }
-                
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine(ex);
-                return null;
-            }
-        }
         //metodo para buscar un usuario en especifico 
-        public Usuario GetById(int id)
+        public Result GetById(int id)
         {
+            Result result = new Result();
             try
             {
                 //conexion de la base de datos
@@ -160,30 +114,125 @@ namespace SistemaVentasSoap.DataAcess
                         };
 
                         usuario.Rol = rol;
-                        return usuario;
+                        result.Usuario = usuario;
+                        result.Mensaje = "OK";
+                        return result;
                     }
                     else
                     {
-                        return null; // No se encontró un usuario con ese ID
+                        result.Usuario = null;
+                        result.Mensaje = "No existe el Usuario con el  identificador: "+id;
+                        return result; // No se encontró un usuario con ese ID
                     }
-                    //reader.Close();
                 }
             }
             catch (Exception ex)
             {
-                // Manejar excepciones aquí
-                return null;
+                result.Usuario = null;
+                result.Mensaje = ex.ToString();
+                return result;
             }
         }
 
-        public bool LoginUser(string username, string pass)
+        //metodo para ingresar un usuario --SIRVE PARA EL REGISTRO DEL USUARIO
+        public Result Create(Usuario usuario)
         {
-            //try
-            //{
+            Result result = new Result();
+            bool isUsernameUnique = CheckIfUsernameIsUnique(usuario.Username);
+            if (isUsernameUnique)
+            {
+                try
+                {
+                    using (SqlConnection connection = new DbContext().GetConnection())
+                    {
+                        connection.Open();
+                        string query = "INSERT INTO Usuario (nombresCompleto, Username,Correo, IdRol, Clave) VALUES (@NombreUsuario, @Username , @Correo, @IdRol, dbo.EncriptarClave(@Clave))";
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            command.Parameters.AddWithValue("@NombreUsuario", usuario.NombresCompleto);
+                            command.Parameters.AddWithValue("@Correo", usuario.Correo);
+                            command.Parameters.AddWithValue("@IdRol", usuario.IdRol);
+                            command.Parameters.AddWithValue("@Clave", usuario.Clave);
+                            command.Parameters.AddWithValue("@Username", usuario.Username);
+
+                            int rowsAffected = command.ExecuteNonQuery();
+                            result.Usuario = usuario;
+                            result.Mensaje = "Usuario, creado correctamente";
+                            return result;
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    result.Usuario = null;
+                    result.Mensaje = ex.ToString();
+                    return result;
+                }
+            }
+            else
+            {
+                result.Usuario = null;
+                result.Mensaje = "El usuario es único, porfavor ingrese otro nombre de usuario, Username invalid";
+                return result;
+            }
+            
+        }
+        //metodo para Actualizar un usuario por su ID a un usuario NO hacer un 
+        public  Usuario Edit(Usuario usuario, string username)
+        {
+                try
+                {
+                    //conexion de la base de datos
+                    using (SqlConnection connection = new DbContext().GetConnection())
+                    {
+                        //abrimos la conexion
+                        connection.Open();
+                        //sentencia SQL que se va a ejecutar
+                        string query = "UPDATE Usuario SET NombresCompleto = @Nombre, IdRol = @IdRol, Clave= dbo.EncriptarClave(@Clave), Correo = @Correo WHERE Id = @Id";
+                        //se realiza dento para ejecutar el query
+                        using (SqlCommand command = new SqlCommand(query, connection))
+                        {
+                            //se escribe los parametros que se piden siempre que pongas con @es lo que se va a mandar 
+                            command.Parameters.AddWithValue("@NombresCompleto", usuario.NombresCompleto);
+                            command.Parameters.AddWithValue("@Correo", usuario.Correo);
+                            command.Parameters.AddWithValue("@IdRol", usuario.IdRol);
+                            command.Parameters.AddWithValue("@Clave", usuario.Clave);
+
+                            int rowsAffected = command.ExecuteNonQuery();
+
+                            if (rowsAffected > 0)
+                            {
+                                return usuario; // Retorna el usuario editado
+                            }
+                            else
+                            {
+                                return null; // No se pudo actualizar el usuario
+                            }
+                        }
+
+                    }
+
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine(ex);
+                    return null;
+                }
+            
+        }
+        
+
+        public ResultLogin LoginUser(string username, string pass)
+        {
+            ResultLogin result = new ResultLogin();
+            try
+            {
                 using (SqlConnection connection = new DbContext().GetConnection())
                 {
                     connection.Open();
-                    string query = "SELECT u.*, r.Descripcion as Descripcion from Usuario u INNER JOIN Rol r ON u.IdRol = r.id where u.username = @Username and dbo.DesencriptarClave(u.clave) = @Clave";
+                    
+                    string query = "SELECT u.Id as Id , u.NombresCompleto as NombresCompleto , u.Correo AS Correo, u.IdRol as Rol, dbo.DesencriptarClave(u.clave) AS Clave," +
+                        "r.Id AS IdRol, r.Descripcion AS Descripcion FROM Usuario u INNER JOIN Rol r ON u.IdRol = r.Id where u.username = @Username and dbo.DesencriptarClave(u.clave) = @Clave";
 
                     SqlCommand command = new SqlCommand(query, connection);
                     //se escribe los parametros que se piden siempre que pongas con @es lo que se va a mandar 
@@ -191,22 +240,90 @@ namespace SistemaVentasSoap.DataAcess
                     command.Parameters.AddWithValue("@Clave", pass);
                     SqlDataReader reader = command.ExecuteReader();
                     if (reader.Read())
-                    { 
-                        return true;
+                    {
+                        Usuario usuario = new Usuario
+                        {
+                            Id = (int)reader["Id"],
+                            NombresCompleto = (string)reader["NombresCompleto"],
+                            Correo = (string)reader["Correo"],
+                            IdRol = (int)reader["Rol"]
+                        };
+                        Rol rol = new Rol
+                        {
+                            Id = (int)reader["IdRol"],
+                            Descripcion = (string)reader["Descripcion"]
+                        };
+
+                        usuario.Rol = rol;
+                        result.Usuario = usuario;
+                        result.Flag = true;
+                        result.Mensaje = "Ingreso correcto";
+                        return result;
                     }
                     else
                     {
-                        return false;
+                        result.Usuario = null;
+                        result.Flag = false;
+                        result.Mensaje = "Error en las credenciales Username o Password, intente nuevamente";
+                        return result;
                     }
 
                 }
-            //}
-            //catch (Exception ex)
-            //{
-              //  return false;
-            //}
+            }
+            catch (Exception ex)
+            {
+                result.Usuario = null;
+                result.Flag = false;
+                result.Mensaje = ex.ToString();
+                return result;
+            }
            
         }
+
+        //metodo para eliminar usuarios 
+        public String Delete(int id)
+        {
+            try
+            {
+                using (SqlConnection connection = new DbContext().GetConnection())
+                {
+                    connection.Open();
+                    string query = "DELETE FROM Usuario where id = @id";
+                    SqlCommand command = new SqlCommand(query, connection);
+                    command.Parameters.AddWithValue("@id", id);
+                    int rowsAffected = command.ExecuteNonQuery();
+
+                    if (rowsAffected > 0)
+                    {
+                        return "Usuario borrado correctamente";
+                    }
+                    else
+                    {
+                        return "El usuario no pudo ser encontrado o eliminado";
+                    }
+                }
+            }
+            catch(Exception ex)
+            { 
+                return ex.ToString() + " Error en la ejecucion del codigo, consulte con su proveedor";
+            } 
+        }
+
+        //Metodos validaciones de Usuario 
+        private bool CheckIfUsernameIsUnique(string username)
+        {
+            using (SqlConnection connection = new DbContext().GetConnection())
+            {
+                connection.Open();
+                string query = "SELECT COUNT(*) FROM Usuario WHERE username = @Username";
+                SqlCommand command = new SqlCommand(query, connection);
+                command.Parameters.AddWithValue("@Username", username);
+                int userCount = Convert.ToInt32(command.ExecuteScalar());
+
+                return userCount == 0;
+            }
+        }
+
     }
 }
         
