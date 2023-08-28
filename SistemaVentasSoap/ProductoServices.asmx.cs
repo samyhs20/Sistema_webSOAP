@@ -1,5 +1,7 @@
 ﻿using SistemaVentasSoap.DataAcess;
+using SistemaVentasSoap.Models;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -19,10 +21,12 @@ namespace SistemaVentasSoap
     public class ProductoServices : System.Web.Services.WebService
     {
         public readonly ProductoRepository _productoRepository;
+        public readonly CategoriaRepository _categoriaRepository;
 
         public ProductoServices()
         {
             _productoRepository = new ProductoRepository();
+            _categoriaRepository = new CategoriaRepository();   
         }
 
         [WebMethod]
@@ -66,5 +70,25 @@ namespace SistemaVentasSoap
             };
             return _productoRepository.ActualizarProducto(producto);
         }
+        [WebMethod]
+        public List<Categoria> ObtenerTodasLasCategorias()
+        {
+            return _categoriaRepository.GetAll();
+        }
+        [WebMethod]
+        public string AgregarCategoria(String Descripcion)
+        {
+            Categoria categoria = new Categoria
+           {
+               Descripcion = Descripcion
+           };
+            return _categoriaRepository.AgregarCategoria(categoria);
+        }
+        [WebMethod]
+        public List<Producto> ListarProductoPorCategoria(int IdCategoria)
+        {
+            return _categoriaRepository.ListarPorCategorias(IdCategoria);
+        }
+
     }
 }
