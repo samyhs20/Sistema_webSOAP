@@ -34,15 +34,19 @@ namespace SistemaVentasSoap
 
 
         [WebMethod]
-        public Result InsertarUsuario(string name, string username, string correo, string clave, int rol)
+        public Result InsertarUsuario(string nombre, string username ,string apellido, string direccion, string telefono, int edad, string correo, int idRol, string clave)
         {
             Usuario usuario = new Usuario()
             {
 
-                NombresCompleto = name,
+                Nombre = nombre,
+                Apellido = apellido,
+                Direccion = direccion,
+                Telefono = telefono, 
+                Edad = edad,
                 Correo = correo,
                 Clave = clave,
-                IdRol = rol,
+                IdRol = idRol,
                 Username = username
 
             };
@@ -66,7 +70,7 @@ namespace SistemaVentasSoap
         }
 
         [WebMethod]
-        public Result ActualizarUsuario(int id, string name, string username, string correo, string clave, int rol)
+        public Result ActualizarUsuario(int id, string nombre, string username, string apellido, string direccion, string telefono, int edad, string correo, int idRol, string clave)
         {
 
             ResultArray result = _usuarioRepository.GetAll();
@@ -94,10 +98,14 @@ namespace SistemaVentasSoap
                 Usuario usuario = new Usuario()
                 {
                     Id = id,
-                    NombresCompleto = name,
+                    Nombre = nombre,
+                    Apellido = apellido,
+                    Direccion = direccion,
+                    Telefono = telefono,
+                    Edad = edad,
                     Correo = correo,
                     Clave = clave,
-                    IdRol = rol,
+                    IdRol = idRol,
                     Username = username
 
                 };

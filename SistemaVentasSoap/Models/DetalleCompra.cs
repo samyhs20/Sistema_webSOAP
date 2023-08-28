@@ -9,7 +9,7 @@ namespace SistemaVentasSoap.Models
     {
         public int IdVenta { get; set; }
         public int IdProducto { get; set; }
-        public decimal Cantidad { get; set; }
+        public int Cantidad { get; set; }
         public decimal Precio { get; set; }
 
         public Compra Venta { get; set; }

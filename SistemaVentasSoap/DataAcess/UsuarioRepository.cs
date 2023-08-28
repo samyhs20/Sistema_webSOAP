@@ -48,7 +48,11 @@ namespace SistemaVentasSoap.DataAcess
                             Usuario usuario = new Usuario
                             {
                                 Id = (int)reader["Id"],
-                                NombresCompleto = (string)reader["NombresCompleto"],
+                                Nombre = (string)reader["Nombre"],
+                                Apellido = (string)reader["Apellido"],
+                                Direccion = (string)reader["Direccion"],
+                                Telefono = (string)reader["Telefono"],
+                                Edad = (int)reader["Edad"],
                                 Correo = (string)reader["Correo"],
                                 IdRol = (int)reader["IdRol"],
                                 Username = (string)reader["Username"]
@@ -90,8 +94,8 @@ namespace SistemaVentasSoap.DataAcess
                     //SELECT id, nombresCompleto, correo, dbo.DesencriptarClave(clave) AS clave, idRol
                     //FROM USUARIO;
                     string query = "SELECT " +
-                        "u.Id as Id ,u.Username as Username, u.NombresCompleto as NombresCompleto , u.Correo AS Correo, u.IdRol as Rol, dbo.DesencriptarClave(u.clave) AS Clave," +
-                        "r.Id AS IdRol, r.Descripcion AS Descripcion FROM Usuario u INNER JOIN Rol r ON u.IdRol = r.Id WHERE u.Id = @Id";
+                        "u.*, dbo.DesencriptarClave(u.clave) AS ClaveDes," +
+                        " r.Descripcion AS Descripcion FROM Usuario u INNER JOIN Rol r ON u.IdRol = r.Id WHERE u.Id = @Id";
                     SqlCommand command = new SqlCommand(query, connection);
                     command.Parameters.AddWithValue("@Id", id);
 
@@ -102,11 +106,15 @@ namespace SistemaVentasSoap.DataAcess
                         Usuario usuario = new Usuario
                         {
                             Id = (int)reader["Id"],
-                            NombresCompleto = (string)reader["NombresCompleto"],
+                            Nombre = (string)reader["Nombre"],
+                            Apellido = (string)reader["Apellido"],
+                            Direccion = (string)reader["Direccion"],
+                            Telefono = (string)reader["Telefono"],
+                            Edad = (int)reader["Edad"],
                             Correo = (string)reader["Correo"],
-                            Clave = (string)reader["Clave"],
-                            IdRol = (int)reader["Rol"],
-                            Username = (string)reader["Username"]
+                            IdRol = (int)reader["IdRol"],
+                            Username = (string)reader["Username"],
+                            Clave = (string)reader["ClaveDes"],
                         };
                         Rol rol = new Rol
                         {
@@ -147,10 +155,15 @@ namespace SistemaVentasSoap.DataAcess
                     using (SqlConnection connection = new DbContext().GetConnection())
                     {
                         connection.Open();
-                        string query = "INSERT INTO Usuario (nombresCompleto, Username,Correo, IdRol, Clave) VALUES (@NombreUsuario, @Username , @Correo, @IdRol, dbo.EncriptarClave(@Clave))";
+                        string query = "INSERT INTO Usuario (nombre,username,apellido,direccion,telefono,edad,correo, idRol, clave) VALUES " +
+                            "(@Nombre,@Username,@Apellido,@Direccion,@Telefono,@Edad,@Correo, @idRol,dbo.EncriptarClave(@Clave))";
                         using (SqlCommand command = new SqlCommand(query, connection))
                         {
-                            command.Parameters.AddWithValue("@NombreUsuario", usuario.NombresCompleto);
+                            command.Parameters.AddWithValue("@Nombre", usuario.Nombre);
+                            command.Parameters.AddWithValue("@Apellido", usuario.Apellido);
+                            command.Parameters.AddWithValue("@Direccion", usuario.Direccion);
+                            command.Parameters.AddWithValue("@Edad", usuario.Edad);
+                            command.Parameters.AddWithValue("@Telefono", usuario.Telefono);
                             command.Parameters.AddWithValue("@Correo", usuario.Correo);
                             command.Parameters.AddWithValue("@IdRol", usuario.IdRol);
                             command.Parameters.AddWithValue("@Clave", usuario.Clave);
@@ -190,12 +203,17 @@ namespace SistemaVentasSoap.DataAcess
                     //abrimos la conexion
                     connection.Open();
                     //sentencia SQL que se va a ejecutar
-                    string query = "UPDATE Usuario SET NombresCompleto = @NombresCompleto, IdRol = @IdRol, Clave= dbo.EncriptarClave(@Clave), Correo = @Correo WHERE Id = @Id";
+                    string query = "UPDATE Usuario SET nombre=@Nombre,username = @Username ,apellido=@Apellido,direccion=@Direccion,telefono=@Telefono,edad=@Edad, idRol=@IdRol, clave = dbo.EncriptarClave(@Clave), Correo = @Correo WHERE Id = @Id";
                     //se realiza dento para ejecutar el query
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         //se escribe los parametros que se piden siempre que pongas con @es lo que se va a mandar 
-                        command.Parameters.AddWithValue("@NombresCompleto", usuario.NombresCompleto);
+                        command.Parameters.AddWithValue("@Nombre", usuario.Nombre);
+                        command.Parameters.AddWithValue("@Username", usuario.Username);
+                        command.Parameters.AddWithValue("@Apellido", usuario.Apellido);
+                        command.Parameters.AddWithValue("@Direccion", usuario.Direccion);
+                        command.Parameters.AddWithValue("@Telefono", usuario.Telefono);
+                        command.Parameters.AddWithValue("@Edad", usuario.Edad);
                         command.Parameters.AddWithValue("@Correo", usuario.Correo);
                         command.Parameters.AddWithValue("@IdRol", usuario.IdRol);
                         command.Parameters.AddWithValue("@Clave", usuario.Clave);
@@ -237,8 +255,9 @@ namespace SistemaVentasSoap.DataAcess
                 {
                     connection.Open();
                     
-                    string query = "SELECT u.Id as Id , u.NombresCompleto as NombresCompleto , u.Correo AS Correo, u.IdRol as Rol, dbo.DesencriptarClave(u.clave) AS Clave," +
-                        "r.Id AS IdRol, r.Descripcion AS Descripcion FROM Usuario u INNER JOIN Rol r ON u.IdRol = r.Id where u.username = @Username and dbo.DesencriptarClave(u.clave) = @Clave";
+                    string query = "SELECT u.* ,dbo.DesencriptarClave(u.clave) AS ClaveDes," +
+                        "r.Descripcion AS Descripcion FROM Usuario u INNER JOIN Rol r ON u.IdRol = r.Id " +
+                        "where u.username = @Username and dbo.DesencriptarClave(u.clave) = @Clave";
 
                     SqlCommand command = new SqlCommand(query, connection);
                     //se escribe los parametros que se piden siempre que pongas con @es lo que se va a mandar 
@@ -250,9 +269,15 @@ namespace SistemaVentasSoap.DataAcess
                         Usuario usuario = new Usuario
                         {
                             Id = (int)reader["Id"],
-                            NombresCompleto = (string)reader["NombresCompleto"],
+                            Nombre = (string)reader["Nombre"],
+                            Apellido = (string)reader["Apellido"],
+                            Direccion = (string)reader["Direccion"],
+                            Telefono = (string)reader["Telefono"],
+                            Edad = (int)reader["Edad"],
                             Correo = (string)reader["Correo"],
-                            IdRol = (int)reader["Rol"]
+                            IdRol = (int)reader["IdRol"],
+                            Username = (string)reader["Username"],
+                            Clave = (string)reader["ClaveDes"],
                         };
                         Rol rol = new Rol
                         {

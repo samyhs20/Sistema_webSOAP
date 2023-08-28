@@ -5,6 +5,7 @@ using System.Web;
 
 namespace SistemaVentasSoap.Models
 {
+
     public class Compra: BaseEntity
     {
         public string NumeroDocumento { get; set; }
