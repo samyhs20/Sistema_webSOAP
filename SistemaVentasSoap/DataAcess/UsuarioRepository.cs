@@ -8,7 +8,7 @@ using System.Web;
 
 namespace SistemaVentasSoap.DataAcess
 {
-    public class UsuarioRepository : IUsuarioRepository
+    public class UsuarioRepository : DbContext , IUsuarioRepository
     {
         //clases para retornar el objeto del repositorio con mensajes y banderas , para controlar errores
         public class Result { 
@@ -34,7 +34,7 @@ namespace SistemaVentasSoap.DataAcess
             ResultArray result = new ResultArray();
             List<Usuario> usuarios = new List<Usuario>();
             try {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     //p INNER JOIN Categorias c ON p.IdCategoria = c.Id WHERE p.Id = @ProductoId
@@ -88,7 +88,7 @@ namespace SistemaVentasSoap.DataAcess
             try
             {
                 //conexion de la base de datos
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     //SELECT id, nombresCompleto, correo, dbo.DesencriptarClave(clave) AS clave, idRol
@@ -152,7 +152,7 @@ namespace SistemaVentasSoap.DataAcess
             {
                 try
                 {
-                    using (SqlConnection connection = new DbContext().GetConnection())
+                    using (SqlConnection connection = GetConnection())
                     {
                         connection.Open();
                         string query = "INSERT INTO Usuario (nombre,username,apellido,direccion,telefono,edad,correo, idRol, clave) VALUES " +
@@ -198,7 +198,7 @@ namespace SistemaVentasSoap.DataAcess
             try
             {
                 //conexion de la base de datos
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     //abrimos la conexion
                     connection.Open();
@@ -251,7 +251,7 @@ namespace SistemaVentasSoap.DataAcess
             ResultLogin result = new ResultLogin();
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     
@@ -316,7 +316,7 @@ namespace SistemaVentasSoap.DataAcess
         {
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     string query = "DELETE FROM Usuario where id = @id";

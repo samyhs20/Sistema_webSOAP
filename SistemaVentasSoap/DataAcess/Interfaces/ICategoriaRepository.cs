@@ -9,11 +9,12 @@ namespace SistemaVentasSoap.DataAcess.Interfaces
 {
     internal interface ICategoriaRepository
     {
-        //Metodo para listar categoria
-        List<Categoria> GetAll();
-        //Metodo para gregar categoria
         string AgregarCategoria(Categoria categoria);
-        //Metodo para listar productos por categoria
+        List<Categoria> GetAll();
         List<Producto> ListarPorCategorias(int IdCategoria);
+
+
+
+
     }
 }

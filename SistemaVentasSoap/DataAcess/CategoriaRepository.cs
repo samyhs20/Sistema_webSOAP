@@ -10,14 +10,14 @@ using System.Windows.Input;
 
 namespace SistemaVentasSoap.DataAcess
 {
-    public class CategoriaRepository : ICategoriaRepository
+    public class CategoriaRepository : DbContext, ICategoriaRepository
     {
         public List<Categoria> GetAll()
         {
             List<Categoria> categorias = new List<Categoria>();
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     SqlCommand command = new SqlCommand("select * from CATEGORIA", connection);
@@ -46,7 +46,7 @@ namespace SistemaVentasSoap.DataAcess
         {
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     string query = "INSERT INTO Categoria (Descripcion) VALUES (@Descripcion)";
@@ -69,7 +69,7 @@ namespace SistemaVentasSoap.DataAcess
             List<Producto> pcategorias = new List<Producto>();
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     SqlCommand command = new SqlCommand("select * from PRODUCTO where idCategoria = @IdCategoria;", connection);

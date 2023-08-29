@@ -13,6 +13,8 @@ namespace SistemaVentasSoap
         public int IdCategoria { get; set; }
         public int Stock { get; set; }
         public decimal Precio { get; set; }  
+        public string UrlImagen { get; set; }
+        public string Descripcion_corta { get; set; }
         public Categoria Categoria { get; set; }
 
     }

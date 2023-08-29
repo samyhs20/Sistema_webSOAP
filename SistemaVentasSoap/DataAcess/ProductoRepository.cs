@@ -8,14 +8,14 @@ using System.Web;
 
 namespace SistemaVentasSoap.DataAcess
 {
-    public class ProductoRepository : IProductoRepository
+    public class ProductoRepository : DbContext , IProductoRepository
     {
         public List<Producto> GetAll()
         {
             List<Producto> productos = new List<Producto>();
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     SqlCommand command = new SqlCommand("SELECT P.*, C.descripcion AS CategoriaProducto FROM Producto P INNER JOIN Categoria C ON P.IdCategoria = C.Id;", connection);
@@ -29,7 +29,9 @@ namespace SistemaVentasSoap.DataAcess
                                 Descripcion = (string)reader["Descripcion"],
                                 IdCategoria = (int)reader["IdCategoria"],
                                 Stock = (int)reader["Stock"],
-                                Precio = (decimal)reader["Precio"]
+                                Precio = (decimal)reader["Precio"],
+                            UrlImagen = (string)reader["UrlImage"],
+                                Descripcion_corta = (string)reader["Descripcion_corta"]
                             };
                             Categoria categoria = new Categoria
                             {
@@ -54,7 +56,7 @@ namespace SistemaVentasSoap.DataAcess
         {
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     string query = "INSERT INTO Producto (Descripcion, IdCategoria, stock, precio) VALUES (@Descripcion, @IdCategoria, @stock, @precio)";
@@ -64,6 +66,8 @@ namespace SistemaVentasSoap.DataAcess
                         command.Parameters.AddWithValue("@IdCategoria", producto.IdCategoria);
                         command.Parameters.AddWithValue("@stock", producto.Stock);
                         command.Parameters.AddWithValue("@precio", producto.Precio);
+                        command.Parameters.AddWithValue("@UrlImagen", producto.UrlImagen);
+                        command.Parameters.AddWithValue("@DesCorta", producto.Descripcion_corta);
 
                         int rowsAffected = command.ExecuteNonQuery();
                         return "Producto Creado";
@@ -82,7 +86,7 @@ namespace SistemaVentasSoap.DataAcess
         {
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     SqlCommand command = new SqlCommand("SELECT P.*, C.descripcion As Categoria FROM Producto P INNER JOIN Categoria C ON P.IdCategoria = C.Id Where P.Id = @BuscarProducto;", connection);
@@ -96,7 +100,11 @@ namespace SistemaVentasSoap.DataAcess
                             Descripcion = (string)reader["Descripcion"],
                             Stock = (int)reader["Stock"],
                             Precio = (decimal)reader["Precio"],
-                            IdCategoria = (int)reader["IdCategoria"]
+                            IdCategoria = (int)reader["IdCategoria"],
+                            UrlImagen = (string)reader["UrlImagen"],
+                            Descripcion_corta = (string)reader["Descripcion_corta"]
+
+                            
                         };
                         Categoria categoria = new Categoria()
                         {
@@ -122,7 +130,7 @@ namespace SistemaVentasSoap.DataAcess
         {
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     SqlCommand command = new SqlCommand("DELETE FROM Producto Where Id = @IdProductoEliminar;", connection);
@@ -146,14 +154,16 @@ namespace SistemaVentasSoap.DataAcess
         {
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection()){
+                using (SqlConnection connection = GetConnection()){
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("UPDATE Producto SET descripcion = @Descripcion, idCategoria = @IdCategoria, Precio = @Precio, Stock = @Stock WHERE id = @Id;", connection)) {
+                    using (SqlCommand command = new SqlCommand("UPDATE Producto SET descripcion = @Descripcion, idCategoria = @IdCategoria, Precio = @Precio, Stock = @Stock, UrlImagen=@UrlImagen, Descripciom_corta=@DesCorta WHERE id = @Id; ", connection)) {
                         command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
                         command.Parameters.AddWithValue("@IdCategoria", producto.IdCategoria);
                         command.Parameters.AddWithValue("@stock", producto.Stock);
                         command.Parameters.AddWithValue("@precio", producto.Precio);
                         command.Parameters.AddWithValue("@Id", producto.Id);
+                        command.Parameters.AddWithValue("@UrlImagen", producto.UrlImagen);
+                        command.Parameters.AddWithValue("@DesCorta", producto.Descripcion_corta);
 
                         int rowsAffected = command.ExecuteNonQuery();
                     if (rowsAffected > 0)  {

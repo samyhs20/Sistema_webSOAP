@@ -8,7 +8,7 @@ using System.Web;
 
 namespace SistemaVentasSoap.DataAcess
 {
-    public class CarritoRepository : ICarrritoRepository
+    public class CarritoRepository : DbContext, ICarrritoRepository
     {
         public class Result
         {
@@ -28,7 +28,7 @@ namespace SistemaVentasSoap.DataAcess
             String numeroDocumento = "MT-" + Ultimaventa()+1;
             try
             {
-                using(SqlConnection connection = new DbContext().GetConnection())
+                using(SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     string query = "INSERT INTO COMPRA(numeroDocumento, tipoPago, Total, Idusuario) VALUES (@NumeroDocumento, @TipoPago,@Total, @IdUsuario)";
@@ -83,7 +83,7 @@ namespace SistemaVentasSoap.DataAcess
             detalle.IdVenta = compra.Id;
             try {
 
-                    using (SqlConnection connection = new DbContext().GetConnection())
+                    using (SqlConnection connection = GetConnection())
                     {
                         connection.Open();
                         string query = "INSERT INTO DETALLECOMPRA (idVenta, IdProducto, cantidad, precio) VALUES (@IdVenta , @IdProducto ,@Cantidad,@Precio) ";
@@ -113,7 +113,7 @@ namespace SistemaVentasSoap.DataAcess
         {
             try
             {
-                using (SqlConnection connection = new DbContext().GetConnection())
+                using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
                     string query = "SELECT MAX(Id) as Id FROM COMPRA";
