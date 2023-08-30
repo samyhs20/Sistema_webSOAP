@@ -7,6 +7,7 @@ using System.Linq;
 using System.Security.Cryptography.X509Certificates;
 using System.Web;
 using System.Web.Services;
+using static SistemaVentasSoap.DataAcess.ProductoRepository;
 
 namespace SistemaVentasSoap
 {
@@ -48,7 +49,7 @@ namespace SistemaVentasSoap
 
         }
         [WebMethod]
-        public Producto BuscarProducto(int Id)
+        public Result BuscarProducto(int Id)
         {
             return _productoRepository.BuscarProducto(Id);
         }

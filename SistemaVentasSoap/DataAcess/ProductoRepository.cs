@@ -10,6 +10,12 @@ namespace SistemaVentasSoap.DataAcess
 {
     public class ProductoRepository : DbContext , IProductoRepository
     {
+
+        public class Result
+        {
+            public Producto Producto { get; set; }
+            public String Mensaje { get; set; }
+        }
         public List<Producto> GetAll()
         {
             List<Producto> productos = new List<Producto>();
@@ -82,8 +88,9 @@ namespace SistemaVentasSoap.DataAcess
             }
         }
         //metodo para buscar un producto 
-        public Producto BuscarProducto(int Id)
+        public Result BuscarProducto(int Id)
         {
+            Result result = new Result();
             try
             {
                 using (SqlConnection connection = GetConnection())
@@ -101,7 +108,7 @@ namespace SistemaVentasSoap.DataAcess
                             Stock = (int)reader["Stock"],
                             Precio = (decimal)reader["Precio"],
                             IdCategoria = (int)reader["IdCategoria"],
-                            UrlImagen = (string)reader["UrlImagen"],
+                            UrlImagen = (string)reader["UrlImage"],
                             Descripcion_corta = (string)reader["Descripcion_corta"]
 
                             
@@ -112,17 +119,23 @@ namespace SistemaVentasSoap.DataAcess
                             Descripcion = (string)reader["Categoria"]
                         };
                         producto.Categoria = categoria;
-                    return producto;
+                        result.Producto = producto;
+                        result.Mensaje = "ok";
+                    return result;
                     }
                     else
                     {
-                        return null;
+                        result.Producto = null;
+                        result.Mensaje = "Error no se encuentra el producto";
+                        return result;
                     }
                 }
             }
             catch (Exception ex)
             {
-                return null;
+                result.Producto = null;
+                result.Mensaje = ex.ToString();
+                return result;
             }
         }
         //metodo para eliminar producto

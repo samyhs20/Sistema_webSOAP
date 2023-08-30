@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Web.UI.WebControls.WebParts;
+using static SistemaVentasSoap.DataAcess.ProductoRepository;
 
 namespace SistemaVentasSoap.DataAcess.Interfaces
 {
@@ -18,7 +19,7 @@ namespace SistemaVentasSoap.DataAcess.Interfaces
         //metodo interfaz para crear producto
         String Create(Producto producto);
         //metodo interfaz para buscar por
-        Producto BuscarProducto(int id);
+        Result BuscarProducto(int id);
         //metodo para eliminar producto
         String EliminarProducto(int id);
         //Metodo para Actualizar productos
