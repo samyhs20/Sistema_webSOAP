@@ -83,7 +83,9 @@ namespace SistemaVentasSoap.DataAcess
                             Descripcion = (string)reader["Descripcion"],
                             IdCategoria = (int)reader["IdCategoria"],
                             Stock = (int)reader["Stock"],
-                            Precio = (decimal)reader["Precio"]
+                            Precio = (decimal)reader["Precio"],
+                             Descripcion_corta = (string)reader["Descripcion_corta"],
+                            UrlImagen = (string)reader["UrlImage"]
                         };
                         pcategorias.Add(pcategoria);
                     }

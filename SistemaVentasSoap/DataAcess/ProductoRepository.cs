@@ -169,7 +169,7 @@ namespace SistemaVentasSoap.DataAcess
             {
                 using (SqlConnection connection = GetConnection()){
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("UPDATE Producto SET descripcion = @Descripcion, idCategoria = @IdCategoria, Precio = @Precio, Stock = @Stock, UrlImagen=@UrlImagen, Descripciom_corta=@DesCorta WHERE id = @Id; ", connection)) {
+                    using (SqlCommand command = new SqlCommand("UPDATE Producto SET descripcion = @Descripcion, idCategoria = @IdCategoria, Precio = @Precio, Stock = @Stock, UrlImage=@UrlImagen, Descripciom_corta=@DesCorta WHERE id = @Id; ", connection)) {
                         command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
                         command.Parameters.AddWithValue("@IdCategoria", producto.IdCategoria);
                         command.Parameters.AddWithValue("@stock", producto.Stock);
