@@ -195,6 +195,44 @@ namespace SistemaVentasSoap.DataAcess
                 return ex.ToString();
             }
         }
+        public List<Producto> BuscarProductosDescripcion(string palabra)
+        {
+           // try {
+                List<Producto> listProductos = new List<Producto>();
+
+                using (SqlConnection connection = GetConnection())
+                {
+                    connection.Open();
+                    SqlCommand command = new SqlCommand("Select p.*, c.descripcion as CategoriaProducto  from producto p  inner Join Categoria c on c.id = p.idCategoria where p.Descripcion like '%" + palabra + "%'", connection);
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        while (reader.Read())
+                        {
+                            Producto producto = new Producto
+                            {
+                                Id = (int)reader["Id"],
+                                Descripcion = (string)reader["Descripcion"],
+                                IdCategoria = (int)reader["IdCategoria"],
+                                Stock = (int)reader["Stock"],
+                                Precio = (decimal)reader["Precio"],
+                                UrlImagen = (string)reader["UrlImage"],
+                                Descripcion_corta = (string)reader["Descripcion_corta"]
+                            };
+                            Categoria categoria = new Categoria
+                            {
+                                Id = (int)reader["IdCategoria"],
+                                Descripcion = (string)reader["CategoriaProducto"]
+                            };
+                            producto.Categoria = categoria;
+                            listProductos.Add(producto);
+                        }
+                    }
+                    return listProductos;
+                }
+          //  }catch(Exception ex) {
+            //    return null;
+           // }
+        }
 
     }
 }

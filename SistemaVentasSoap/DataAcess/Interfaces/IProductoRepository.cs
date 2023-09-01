@@ -23,7 +23,9 @@ namespace SistemaVentasSoap.DataAcess.Interfaces
         //metodo para eliminar producto
         String EliminarProducto(int id);
         //Metodo para Actualizar productos
-        string ActualizarProducto(Producto producto);  
+        string ActualizarProducto(Producto producto);
+
+        List<Producto> BuscarProductosDescripcion(string palabra);
     }
 }
 

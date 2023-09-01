@@ -91,5 +91,11 @@ namespace SistemaVentasSoap
             return _categoriaRepository.ListarPorCategorias(IdCategoria);
         }
 
+        [WebMethod]
+        public List<Producto> BuscarProductorDescripcion(string palabra)
+        {
+            return _productoRepository.BuscarProductosDescripcion(palabra);
+        }
+
     }
 }
