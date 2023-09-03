@@ -65,15 +65,15 @@ namespace SistemaVentasSoap.DataAcess
                 using (SqlConnection connection = GetConnection())
                 {
                     connection.Open();
-                    string query = "INSERT INTO Producto (Descripcion, IdCategoria, stock, precio) VALUES (@Descripcion, @IdCategoria, @stock, @precio)";
+                    string query = "INSERT INTO Producto (Descripcion, IdCategoria, stock, precio,UrlImage, Descripcion_corta) VALUES (@Descripcion, @IdCategoria, @stock, @precio, @UrlImage, @Descripcion_corta)";
                     using (SqlCommand command = new SqlCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
                         command.Parameters.AddWithValue("@IdCategoria", producto.IdCategoria);
                         command.Parameters.AddWithValue("@stock", producto.Stock);
                         command.Parameters.AddWithValue("@precio", producto.Precio);
-                        command.Parameters.AddWithValue("@UrlImagen", producto.UrlImagen);
-                        command.Parameters.AddWithValue("@DesCorta", producto.Descripcion_corta);
+                        command.Parameters.AddWithValue("@UrlImage", producto.UrlImagen);
+                        command.Parameters.AddWithValue("@Descripcion_Corta", producto.Descripcion_corta);
 
                         int rowsAffected = command.ExecuteNonQuery();
                         return "Producto Creado";
@@ -169,7 +169,7 @@ namespace SistemaVentasSoap.DataAcess
             {
                 using (SqlConnection connection = GetConnection()){
                     connection.Open();
-                    using (SqlCommand command = new SqlCommand("UPDATE Producto SET descripcion = @Descripcion, idCategoria = @IdCategoria, Precio = @Precio, Stock = @Stock, UrlImage=@UrlImagen, Descripciom_corta=@DesCorta WHERE id = @Id; ", connection)) {
+                    using (SqlCommand command = new SqlCommand("UPDATE Producto SET descripcion = @Descripcion, idCategoria = @IdCategoria, Precio = @Precio, Stock = @Stock, UrlImage=@UrlImagen, Descripcion_corta=@DesCorta WHERE id = @Id; ", connection)) {
                         command.Parameters.AddWithValue("@Descripcion", producto.Descripcion);
                         command.Parameters.AddWithValue("@IdCategoria", producto.IdCategoria);
                         command.Parameters.AddWithValue("@stock", producto.Stock);

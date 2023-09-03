@@ -36,14 +36,16 @@ namespace SistemaVentasSoap
             return _productoRepository.GetAll();
         }
         [WebMethod]
-        public String CrearProducto(string Descripcion, int IdCategoria, int Stock, decimal Precio)
+        public String CrearProducto(string Descripcion, int IdCategoria, int Stock, decimal Precio,  string UrlImagen, string Descripcion_corta )
         {
             Producto producto = new Producto()
             {
                 Descripcion = Descripcion,
                 IdCategoria = IdCategoria,
                 Stock = Stock,
-                Precio = Precio
+                Precio = Precio,
+                UrlImagen = UrlImagen,
+                Descripcion_corta = Descripcion_corta   
             };
             return _productoRepository.Create(producto);
 
@@ -59,7 +61,7 @@ namespace SistemaVentasSoap
             return _productoRepository.EliminarProducto(Id);
         }
         [WebMethod]
-        public String ActualizarProducto(int Id, int IdCategoria, string Descripcion, int Stock, decimal Precio)
+        public String ActualizarProducto(int Id, int IdCategoria, string Descripcion, int Stock, decimal Precio, string UrlImagen, string Descripcion_corta)
         {
             Producto producto = new Producto()
             {
@@ -67,7 +69,10 @@ namespace SistemaVentasSoap
                 IdCategoria = IdCategoria,
                 Stock = Stock,
                 Descripcion = Descripcion,
-                Precio = Precio
+                Precio = Precio, 
+                UrlImagen = UrlImagen,
+                Descripcion_corta= Descripcion_corta
+
             };
             return _productoRepository.ActualizarProducto(producto);
         }
